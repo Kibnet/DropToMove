@@ -1,0 +1,42 @@
+﻿<Window x:Class="DropToMove.DropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dropToMove="clr-namespace:DropToMove"
+        Title="DropToMove" Height="200" Width="368" Drop="UIElement_OnDrop" AllowDrop="True" Topmost="{Binding Topmost}">
+    <Window.DataContext>
+        <dropToMove:ViewModel x:Name="ContextViewModel"/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Expander ExpandDirection="Down" Header="Параметры действий" IsEnabled="{Binding NotWorking}">
+            <StackPanel>
+                <Grid>
+                    <ComboBox Height="23" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" ItemsSource="{Binding AllOperations}" SelectedItem="{Binding Operation}"/>
+                    <TextBox Height="23" Margin="100,0,0,0" TextWrapping="Wrap" Text="{Binding Destination, Mode=TwoWay}" VerticalAlignment="Top" MouseDoubleClick="Control_OnMouseDoubleClick" VerticalContentAlignment="Center"/>
+                </Grid>
+                <CheckBox IsChecked="{Binding Overwrite}" Content="Перезаписывать существующие" Height="23" VerticalContentAlignment="Center"/>
+            </StackPanel>
+        </Expander>
+        <CheckBox IsChecked="{Binding Topmost}" Grid.Row="0" Content="Поверх всех окон" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,4,0"/>
+        <Grid Grid.Row="1">
+            <ProgressBar IsIndeterminate="{Binding IsWorking}" ></ProgressBar>
+            <StackPanel Margin="00" Grid.RowSpan="2">
+                <Label>
+                    <TextBlock TextWrapping="Wrap">Попыток <Run Text="{Binding Operation}"/>: <Run Text="{Binding TryCounter}"/></TextBlock>
+                </Label>
+                <Label>
+                    <TextBlock>Получилось <Run Text="{Binding Operation}"/>: <Run Text="{Binding Counter}"/></TextBlock>
+                </Label>
+                <Label>
+                    <TextBlock TextWrapping="Wrap"><Run Text="{Binding Status}"/></TextBlock>
+                </Label>
+            </StackPanel>
+        </Grid>
+        
+
+
+    </Grid>
+</Window>
