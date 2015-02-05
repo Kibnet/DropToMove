@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DropToMove.Annotations;
 
 namespace DropToMove
@@ -124,28 +125,34 @@ namespace DropToMove
 
 		public void RecursiveAction(IEnumerable<string> infos)
 		{
-			IEnumerable<FileSystemInfo> list = infos.Select(entity =>
+			foreach (var entity in infos)
 			{
-				var info = new FileInfo(entity);
-				if (info.Exists)
+				try
 				{
-					sourceInfo = info.Directory;
-					return info as FileSystemInfo;
+					var info = new FileInfo(entity);
+					if (info.Exists)
+					{
+						sourceInfo = info.Directory;
+						DoFile(info);
+					}
+					var dir = new DirectoryInfo(entity);
+					if (dir.Exists)
+					{
+						sourceInfo = dir.Parent;
+						RecursiveAction(dir.EnumerateFileSystemInfos());
+					}
 				}
-				var dir = new DirectoryInfo(entity);
-				if (dir.Exists)
+				catch (Exception e)
 				{
-					sourceInfo = dir.Parent;
-					return dir as FileSystemInfo;
+					Catch(e);
 				}
-				return null;
-			});
-			RecursiveAction(list);
+			}
 		}
 
 		public void RecursiveAction(IEnumerable<FileSystemInfo> infos)
 		{
-			foreach (FileSystemInfo info in infos)
+			Parallel.ForEach(infos, info =>
+				//foreach (FileSystemInfo info in infos)
 			{
 				try
 				{
@@ -161,7 +168,7 @@ namespace DropToMove
 				{
 					Catch(e);
 				}
-			}
+			});
 		}
 
 		private DirectoryInfo sourceInfo;
